@@ -2,7 +2,7 @@
 
 Aplicação web desenvolvida como parte do processo seletivo para a Lions Seminovos. O objetivo foi recriar a experiência do site institucional focando em performance, UX moderna e funcionalidades avançadas de catálogo e agendamento.
 
-🔗 **Link do Projeto:** [Em breve - Coloque o link da Vercel aqui depois]
+🔗 **Link do Projeto:** https://lions-seminovos-test.vercel.app/
 
 ## 🚀 Tecnologias e Decisões Técnicas
 
@@ -42,7 +42,7 @@ Além dos requisitos básicos, implementei funcionalidades focadas em conversão
 
 1.  Clone o repositório:
     ```bash
-    git clone [https://github.com/seu-usuario/lions-seminovos-test.git](https://github.com/seu-usuario/lions-seminovos-test.git)
+    git clone [https://github.com/FelipeGPellegrini/lions-seminovos-test](https://github.com/FelipeGPellegrini/lions-seminovos-test)
     ```
 2.  Instale as dependências:
     ```bash
