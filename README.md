@@ -1,8 +1,7 @@
-# 🦁 Lions Seminovos - Desafio Front-end
+# Lions Seminovos - Desafio Front-end
 
-> Uma experiência de compra automotiva moderna, rápida e inteligente.
 
-🔗 **Link do Projeto Online:** [Acesse a Demo na Vercel](https://lions-seminovos-test.vercel.app/)
+🔗 **Link do Projeto Online:** [Acesse aqui!](https://lions-seminovos-test.vercel.app/)
 
 ---
 
@@ -13,7 +12,7 @@
 ![TailwindCSS](https://img.shields.io/badge/tailwindcss-%2338B2AC.svg?style=for-the-badge&logo=tailwind-css&logoColor=white)
 ![Framer Motion](https://img.shields.io/badge/Framer_Motion-0055FF?style=for-the-badge&logo=framer&logoColor=white)
 
-A escolha das tecnologias visou performance (Core Web Vitals) e DX (Developer Experience):
+A escolha das tecnologias visou performance e UI/UX:
 
 | Tecnologia | Função no Projeto |
 | :--- | :--- |
