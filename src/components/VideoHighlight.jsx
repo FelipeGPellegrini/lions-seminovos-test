@@ -3,9 +3,6 @@ import { motion } from 'framer-motion';
 
 export const VideoHighlight = () => {
   const videoRef = useRef(null);
-  const [videoError, setVideoError] = useState(false);
-  const [videoReady, setVideoReady] = useState(false);
-  const [useImageFallback, setUseImageFallback] = useState(false);
   
   // CORREÇÃO 1: Inicializa o estado JÁ sabendo o tamanho da tela.
   // Isso impede que ele carregue como "Desktop" e depois mude para "Mobile".
@@ -22,50 +19,18 @@ export const VideoHighlight = () => {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  // Força o vídeo a carregar e tocar no mobile
+  // Apenas para desktop: força o vídeo a carregar e tocar
   useEffect(() => {
+    if (isMobile) return; // Não faz nada no mobile (usa GIF)
+    
     const video = videoRef.current;
     if (!video) return;
-
-    // No mobile, após 3 segundos, se o vídeo não estiver pronto, usa imagem
-    let fallbackTimeout;
-    if (isMobile) {
-      fallbackTimeout = setTimeout(() => {
-        if (!videoReady && !videoError) {
-          console.log('Vídeo não carregou a tempo no mobile, usando fallback de imagem');
-          setUseImageFallback(true);
-        }
-      }, 3000);
-    }
 
     // Adiciona atributos específicos para mobile via DOM direto
     video.setAttribute('webkit-playsinline', 'true');
     video.setAttribute('playsinline', 'true');
-    video.setAttribute('x5-playsinline', 'true');
-    video.setAttribute('x5-video-player-type', 'h5');
-    video.setAttribute('x5-video-player-fullscreen', 'true');
-
-    const handleLoadedMetadata = () => {
-      setVideoReady(true);
-      if (fallbackTimeout) clearTimeout(fallbackTimeout);
-    };
-
-    const handleLoadedData = () => {
-      setVideoReady(true);
-      if (fallbackTimeout) clearTimeout(fallbackTimeout);
-      // Tenta tocar o vídeo quando os dados estiverem carregados
-      const playPromise = video.play();
-      if (playPromise !== undefined) {
-        playPromise.catch((error) => {
-          console.log('Autoplay bloqueado:', error);
-          // Mesmo se autoplay falhar, o vídeo ainda deve aparecer
-        });
-      }
-    };
 
     const handleCanPlay = () => {
-      setVideoReady(true);
-      if (fallbackTimeout) clearTimeout(fallbackTimeout);
       // Tenta tocar quando o vídeo estiver pronto
       const playPromise = video.play();
       if (playPromise !== undefined) {
@@ -75,47 +40,9 @@ export const VideoHighlight = () => {
       }
     };
 
-    const handleError = (e) => {
-      console.error('Erro ao carregar vídeo:', e);
-      console.error('Video error details:', {
-        code: video.error?.code,
-        message: video.error?.message,
-        networkState: video.networkState,
-        readyState: video.readyState
-      });
-      setVideoError(true);
-      if (fallbackTimeout) clearTimeout(fallbackTimeout);
-      // No mobile, se der erro, sempre usa imagem
-      if (isMobile) {
-        setUseImageFallback(true);
-      }
-    };
-
-    // Verifica se o vídeo está realmente visível após um tempo (mobile)
-    const visibilityCheck = setTimeout(() => {
-      if (isMobile && video) {
-        if (video.readyState === 0 || (!videoReady && !videoError)) {
-          console.log('Vídeo não carregou no mobile após 2s, usando fallback de imagem');
-          setUseImageFallback(true);
-        }
-      }
-    }, 2000);
-
-    // Verifica se o vídeo já está carregado
-    if (video.readyState >= 2) {
-      setVideoReady(true);
-      if (fallbackTimeout) clearTimeout(fallbackTimeout);
-    }
-
-    // Garante que o vídeo carregue
-    video.load();
-    
-    video.addEventListener('loadedmetadata', handleLoadedMetadata);
-    video.addEventListener('loadeddata', handleLoadedData);
     video.addEventListener('canplay', handleCanPlay);
-    video.addEventListener('error', handleError);
 
-    // Tenta tocar imediatamente após um pequeno delay (para mobile)
+    // Tenta tocar imediatamente
     const timeoutId = setTimeout(() => {
       const playPromise = video.play();
       if (playPromise !== undefined) {
@@ -126,15 +53,10 @@ export const VideoHighlight = () => {
     }, 100);
 
     return () => {
-      if (fallbackTimeout) clearTimeout(fallbackTimeout);
       clearTimeout(timeoutId);
-      clearTimeout(visibilityCheck);
-      video.removeEventListener('loadedmetadata', handleLoadedMetadata);
-      video.removeEventListener('loadeddata', handleLoadedData);
       video.removeEventListener('canplay', handleCanPlay);
-      video.removeEventListener('error', handleError);
     };
-  }, [isMobile, videoReady, videoError]);
+  }, [isMobile]);
 
   // Configuração da animação (Só usada se NÃO for mobile)
   const revealVariants = {
@@ -176,56 +98,34 @@ export const VideoHighlight = () => {
         {/* Overlay leve */}
         <div className="absolute inset-0 bg-black/10 z-10 pointer-events-none" />
 
-        {/* Vídeo ou Fallback */}
-        {(videoError || (isMobile && useImageFallback)) ? (
-          // Fallback: Imagem de fundo caso o vídeo não carregue (especialmente no mobile)
-          <div className="w-full h-full relative bg-gradient-to-b from-gray-900 via-gray-800 to-black">
-            <img
-              src="/assets/byd-seal-poster.jpg"
-              alt="BYD Seal"
-              className="w-full h-full object-cover object-center"
-              onError={(e) => {
-                // Se a imagem também falhar, esconde e mostra apenas o gradiente
-                e.target.style.display = 'none';
-              }}
-            />
-          </div>
+        {/* Mobile: GIF | Desktop: Vídeo */}
+        {isMobile ? (
+          // MOBILE: Usa GIF
+          <img
+            src="/assets/byd-seal.gif"
+            alt="BYD Seal"
+            className="w-full h-full object-cover object-center"
+          />
         ) : (
-          <>
-            <video
-              ref={videoRef}
-              className="w-full h-full object-cover object-center"
-              autoPlay
-              loop
-              muted
-              playsInline
-              preload="auto"
-              poster="/assets/byd-seal-poster.jpg"
-              style={{ 
-                WebkitPlaysinline: true,
-                playsInline: true,
-                position: 'relative',
-                zIndex: videoReady || !isMobile ? 2 : 1
-              }}
-            >
-              <source src="/assets/byd-seal.mp4" type="video/mp4" />
-              <source src="/assets/byd-seal.webm" type="video/webm" />
-              Seu navegador não suporta vídeos.
-            </video>
-            {/* Imagem de fundo enquanto o vídeo carrega (especialmente no mobile) */}
-            {(!videoReady && isMobile) && (
-              <div className="absolute inset-0 w-full h-full bg-gradient-to-b from-gray-900 via-gray-800 to-black" style={{ zIndex: 1 }}>
-                <img
-                  src="/assets/byd-seal-poster.jpg"
-                  alt="BYD Seal"
-                  className="w-full h-full object-cover object-center"
-                  onError={(e) => {
-                    e.target.style.display = 'none';
-                  }}
-                />
-              </div>
-            )}
-          </>
+          // DESKTOP: Usa Vídeo
+          <video
+            ref={videoRef}
+            className="w-full h-full object-cover object-center"
+            autoPlay
+            loop
+            muted
+            playsInline
+            preload="auto"
+            poster="/assets/byd-seal-poster.jpg"
+            style={{ 
+              WebkitPlaysinline: true,
+              playsInline: true
+            }}
+          >
+            <source src="/assets/byd-seal.mp4" type="video/mp4" />
+            <source src="/assets/byd-seal.webm" type="video/webm" />
+            Seu navegador não suporta vídeos.
+          </video>
         )}
 
         {/* Texto */}
