@@ -24,10 +24,10 @@ A escolha das tecnologias visou performance (Core Web Vitals) e DX (Developer Ex
 | **React Router** | Roteamento SPA (Single Page Application). |
 | **Lucide React** | Ícones vetoriais leves e consistentes. |
 
-## 🖼️ Galeria do Projeto
+## Projeto
 
 ### 1. Home Page
-imgs\image.png
+_Slider responsivo e design moderno._
 ### 2. Catálogo com Filtros
 _Filtros laterais e cards interativos._
 ### 3. Agendamento (Geolocalização)
@@ -74,4 +74,4 @@ O botão flutuante muda a mensagem dependendo de onde o usuário está:
 
 ---
 
-Desenvolvido por **Felipe Pellegrini** 🦁
+Desenvolvido por **Felipe Pellegrini**
