@@ -1,7 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 
 export const VideoHighlight = () => {
+  const videoRef = useRef(null);
+  const [videoError, setVideoError] = useState(false);
+  
   // CORREÇÃO 1: Inicializa o estado JÁ sabendo o tamanho da tela.
   // Isso impede que ele carregue como "Desktop" e depois mude para "Mobile".
   const [isMobile, setIsMobile] = useState(() => 
@@ -15,6 +18,69 @@ export const VideoHighlight = () => {
     
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // Força o vídeo a carregar e tocar no mobile
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    // Adiciona atributos específicos para mobile via DOM direto
+    video.setAttribute('webkit-playsinline', 'true');
+    video.setAttribute('playsinline', 'true');
+    video.setAttribute('x5-playsinline', 'true');
+    video.setAttribute('x5-video-player-type', 'h5');
+    video.setAttribute('x5-video-player-fullscreen', 'true');
+
+    const handleLoadedData = () => {
+      // Tenta tocar o vídeo quando os dados estiverem carregados
+      const playPromise = video.play();
+      if (playPromise !== undefined) {
+        playPromise.catch((error) => {
+          console.log('Autoplay bloqueado:', error);
+          // Mesmo se autoplay falhar, o vídeo ainda deve aparecer
+        });
+      }
+    };
+
+    const handleCanPlay = () => {
+      // Tenta tocar quando o vídeo estiver pronto
+      const playPromise = video.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(() => {
+          // Autoplay bloqueado, mas vídeo deve aparecer
+        });
+      }
+    };
+
+    const handleError = (e) => {
+      console.error('Erro ao carregar vídeo:', e);
+      setVideoError(true);
+    };
+
+    // Garante que o vídeo carregue
+    video.load();
+    
+    video.addEventListener('loadeddata', handleLoadedData);
+    video.addEventListener('canplay', handleCanPlay);
+    video.addEventListener('error', handleError);
+
+    // Tenta tocar imediatamente após um pequeno delay (para mobile)
+    const timeoutId = setTimeout(() => {
+      const playPromise = video.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(() => {
+          // Autoplay bloqueado, mas o vídeo ainda deve aparecer
+        });
+      }
+    }, 100);
+
+    return () => {
+      clearTimeout(timeoutId);
+      video.removeEventListener('loadeddata', handleLoadedData);
+      video.removeEventListener('canplay', handleCanPlay);
+      video.removeEventListener('error', handleError);
+    };
   }, []);
 
   // Configuração da animação (Só usada se NÃO for mobile)
@@ -57,17 +123,31 @@ export const VideoHighlight = () => {
         {/* Overlay leve */}
         <div className="absolute inset-0 bg-black/10 z-10 pointer-events-none" />
 
-        {/* Vídeo */}
-        <video
-          className="w-full h-full object-cover object-center"
-          autoPlay
-          loop
-          muted
-          playsInline
-        >
-          <source src="/assets/byd-seal.mp4" type="video/mp4" />
-          Seu navegador não suporta vídeos.
-        </video>
+        {/* Vídeo ou Fallback */}
+        {videoError ? (
+          // Fallback: Imagem de fundo caso o vídeo não carregue
+          <div className="w-full h-full bg-gray-900 flex items-center justify-center">
+            <p className="text-white/50 text-sm">Vídeo não disponível</p>
+          </div>
+        ) : (
+          <video
+            ref={videoRef}
+            className="w-full h-full object-cover object-center"
+            autoPlay
+            loop
+            muted
+            playsInline
+            preload="auto"
+            style={{ 
+              WebkitPlaysinline: true,
+              playsInline: true 
+            }}
+          >
+            <source src="/assets/byd-seal.mp4" type="video/mp4" />
+            <source src="/assets/byd-seal.webm" type="video/webm" />
+            Seu navegador não suporta vídeos.
+          </video>
+        )}
 
         {/* Texto */}
         <div className="absolute bottom-10 left-6 md:left-10 z-20">
