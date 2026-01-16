@@ -98,7 +98,7 @@ export const HeroSlider = () => {
   const activeSlide = slides[current];
 
   return (
-    <div className="relative w-full aspect-[3/5] md:aspect-[3/1] bg-dark group overflow-hidden">
+    <div className="relative w-full max-w-[100vw] aspect-[3/5] md:aspect-[3/1] bg-dark group overflow-hidden">
       
       <AnimatePresence mode='wait'>
         <motion.div

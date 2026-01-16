@@ -31,7 +31,7 @@ export const Header = () => {
   return (
     // Header fixo no topo
     <header 
-      className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
+      className={`fixed top-0 left-0 w-full max-w-[100vw] z-50 transition-all duration-300 ${
         scrolled ? 'bg-dark/95 backdrop-blur-md py-4 shadow-lg' : 'bg-transparent py-6'
       }`}
     >
@@ -66,7 +66,7 @@ export const Header = () => {
         {/* BOTÃO HAMBURGUER (MOBILE) */}
         <button 
           onClick={() => setIsOpen(!isOpen)}
-          className="md:hidden text-white z-50 p-2 focus:outline-none"
+          className="md:hidden text-white z-[70] p-2 focus:outline-none relative"
         >
           <div className="w-6 h-6 flex flex-col justify-center items-center gap-1.5">
             {/* Linha de cima */}
@@ -95,8 +95,15 @@ export const Header = () => {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.3 }}
-              className="absolute top-0 left-0 w-full h-screen bg-dark/95 backdrop-blur-xl md:hidden flex flex-col items-center justify-center gap-8"
+              className="fixed top-0 left-0 w-full h-screen bg-dark/95 backdrop-blur-xl md:hidden flex flex-col items-center justify-center gap-8 z-[60]"
             >
+              {/* Botão de fechar dentro do menu */}
+              <button
+                onClick={() => setIsOpen(false)}
+                className="absolute top-6 right-6 text-white z-[70] p-2 focus:outline-none"
+              >
+                
+              </button>
               {links.map((link) => (
                 <Link
                   key={link.name}

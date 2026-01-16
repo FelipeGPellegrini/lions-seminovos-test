@@ -5,6 +5,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { WhatsAppButton } from './components/WhatsAppButton';
+import { ScrollToTop } from './components/ScrollToTop';
 
 // --- PÁGINAS REAIS (Importadas das pastas que criamos) ---
 // Se você não criou a pasta 'pages' e deixou tudo em components, ajuste o caminho.
@@ -17,7 +18,8 @@ import { Schedule } from './pages/Schedule';
 function App() {
   return (
     <Router>
-      <div className="bg-dark min-h-screen text-white font-sans flex flex-col">
+      <ScrollToTop />
+      <div className="bg-dark min-h-screen text-white font-sans flex flex-col overflow-x-hidden w-full max-w-[100vw]">
         {/* Header fixo no topo */}
         <Header />
         

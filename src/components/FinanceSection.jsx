@@ -4,7 +4,7 @@ import { CheckCircle2, ArrowRight } from 'lucide-react';
 
 export const FinanceSection = () => {
   return (
-    <section className="py-20 bg-dark relative border-t border-white/5">
+    <section className="py-20 bg-dark relative border-t border-white/5 w-full overflow-x-hidden max-w-[100vw]">
       <div className="container mx-auto px-4 md:px-12">
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">

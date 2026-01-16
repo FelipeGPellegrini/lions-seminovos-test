@@ -75,7 +75,7 @@ export const CategoryGrid = () => {
   const navigate = useNavigate();
 
   return (
-    <section className="py-20 bg-dark">
+    <section className="py-20 bg-dark w-full overflow-x-hidden max-w-[100vw]">
       <div className="container mx-auto px-4">
         
         {/* Cabeçalho da Seção */}

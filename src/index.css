@@ -7,8 +7,14 @@
 /* Estilos globais para garantir suavidade */
 html {
   scroll-behavior: smooth;
+  overflow-x: hidden; /* Previne rolagem horizontal */
+  width: 100%;
+  max-width: 100vw; /* Garante que não ultrapasse a largura da viewport */
 }
 
 body {
   @apply bg-dark text-white antialiased; /* Define o tema escuro como padrão */
+  overflow-x: hidden; /* Previne rolagem horizontal */
+  width: 100%;
+  max-width: 100vw; /* Garante que não ultrapasse a largura da viewport */
 }

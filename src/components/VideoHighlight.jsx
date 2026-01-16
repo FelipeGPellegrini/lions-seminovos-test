@@ -2,30 +2,29 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 
 export const VideoHighlight = () => {
-  const [isMobile, setIsMobile] = useState(false);
+  // CORREÇÃO 1: Inicializa o estado JÁ sabendo o tamanho da tela.
+  // Isso impede que ele carregue como "Desktop" e depois mude para "Mobile".
+  const [isMobile, setIsMobile] = useState(() => 
+    typeof window !== 'undefined' ? window.innerWidth < 768 : false
+  );
 
-  // Detecta se é mobile para desativar a animação inicial
   useEffect(() => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 768);
     };
     
-    // Checa ao carregar
-    checkMobile();
-    
-    // Checa se a pessoa redimensionar a tela
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  // Configuração da animação
+  // Configuração da animação (Só usada se NÃO for mobile)
   const revealVariants = {
     hidden: { 
-      clipPath: 'inset(45% 0 45% 0)', // Desktop começa fechado
+      clipPath: 'inset(45% 0 45% 0)', 
       opacity: 0.8
     },
     visible: { 
-      clipPath: 'inset(0% 0 0% 0)', // Abre totalmente
+      clipPath: 'inset(0% 0 0% 0)', 
       opacity: 1,
       transition: { 
         duration: 1.5, 
@@ -34,19 +33,26 @@ export const VideoHighlight = () => {
     }
   };
 
+  // Se for mobile, não aplicamos variantes de animação complexas
+  const animationProps = isMobile ? {} : {
+    initial: "hidden",
+    whileInView: "visible",
+    viewport: { once: true, margin: "-20%" },
+    variants: revealVariants
+  };
+
   return (
-    // overflow-hidden aqui previne a barra de rolagem lateral no mobile
-    <section className="w-full bg-dark py-10 overflow-hidden">
+    // CORREÇÃO 2: 'max-w-[100vw]' e 'overflow-x-hidden' forçam o corte lateral
+    <section className="w-full max-w-[100vw] bg-dark py-10 overflow-hidden overflow-x-hidden relative">
       
       <motion.div
-        // A MÁGICA ESTÁ AQUI:
-        // Se for mobile, o estado inicial já é "visible" (aberto).
-        // Se for Desktop, o estado inicial é "hidden" (fechado) e anima para "visible".
-        initial={isMobile ? "visible" : "hidden"}
-        whileInView="visible"
-        viewport={{ once: true, margin: "-20%" }} // Voltei para a config que funcionava no PC
-        variants={revealVariants}
-        className="relative w-full h-[350px] md:h-[600px]"
+        // Espalhamos as props de animação apenas se for Desktop
+        {...animationProps}
+        
+        // No mobile, forçamos o estilo estático (sem clip-path)
+        style={isMobile ? { opacity: 1, clipPath: 'none' } : {}}
+
+        className="relative w-full h-[350px] md:h-[600px] mx-auto"
       >
         {/* Overlay leve */}
         <div className="absolute inset-0 bg-black/10 z-10 pointer-events-none" />
@@ -57,7 +63,7 @@ export const VideoHighlight = () => {
           autoPlay
           loop
           muted
-          playsInline // Essencial para mobile
+          playsInline
         >
           <source src="/assets/byd-seal.mp4" type="video/mp4" />
           Seu navegador não suporta vídeos.
@@ -68,7 +74,7 @@ export const VideoHighlight = () => {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.8, duration: 0.8 }}
+            transition={{ delay: 0.5, duration: 0.8 }}
           >
             <h3 className="text-white text-2xl md:text-5xl font-bold tracking-tighter uppercase drop-shadow-lg">
               BYD Seal

@@ -6,7 +6,7 @@ import { FinanceSection } from '../components/FinanceSection';
 
 export const Home = () => {
   return (
-    <div className="bg-dark min-h-screen">
+    <div className="bg-dark min-h-screen w-full overflow-x-hidden max-w-[100vw]">
       <HeroSlider />
       <CategoryGrid />
       <VideoHighlight />
