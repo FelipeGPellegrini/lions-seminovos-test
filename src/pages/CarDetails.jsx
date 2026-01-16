@@ -9,6 +9,7 @@ export const CarDetails = () => {
   const navigate = useNavigate();
   const [car, setCar] = useState(null);
   const [activeImage, setActiveImage] = useState(0);
+  const [isSharing, setIsSharing] = useState(false);
 
   // Busca o carro assim que a página carrega
   useEffect(() => {
@@ -31,6 +32,92 @@ export const CarDetails = () => {
   // Link do WhatsApp com mensagem personalizada
   const whatsappMessage = encodeURIComponent(`Olá! Vi o ${car.name} no site e tenho real interesse. Podem me passar mais detalhes?`);
   const whatsappLink = `https://wa.me/5511999999999?text=${whatsappMessage}`;
+
+  // Função de compartilhamento
+  const handleShare = async () => {
+    // Previne múltiplos cliques simultâneos
+    if (isSharing) return;
+    
+    setIsSharing(true);
+    
+    const shareData = {
+      title: `${car.name} - Lions Seminovos`,
+      text: `Confira este ${car.name} na Lions Seminovos por ${price}`,
+      url: window.location.href,
+    };
+
+    try {
+      let shareSuccessful = false;
+      
+      // Tenta usar a Web Share API (disponível em mobile e alguns navegadores desktop)
+      if (navigator.share) {
+        try {
+          await navigator.share(shareData);
+          shareSuccessful = true;
+        } catch (err) {
+          // Usuário cancelou ou erro ao compartilhar
+          if (err.name === 'AbortError') {
+            // Usuário cancelou, não precisa fazer nada
+            return;
+          } else if (err.name === 'InvalidStateError') {
+            // Já existe uma operação de compartilhamento em andamento
+            console.log('Compartilhamento já em andamento, usando fallback');
+            // Continua para o fallback
+          } else {
+            console.error('Erro ao compartilhar:', err);
+            // Continua para o fallback
+          }
+        }
+      }
+      
+      // Fallback: copia o link para a área de transferência
+      // (executa se Web Share API não estiver disponível ou falhar)
+      if (!shareSuccessful) {
+        try {
+          await navigator.clipboard.writeText(window.location.href);
+          // Usa um toast mais elegante se possível, senão usa alert
+          const toast = document.createElement('div');
+          toast.textContent = 'Link copiado para a área de transferência!';
+          toast.style.cssText = 'position: fixed; bottom: 100px; right: 24px; background: #25D366; color: white; padding: 12px 20px; border-radius: 8px; z-index: 9999; font-weight: bold; box-shadow: 0 4px 12px rgba(0,0,0,0.3);';
+          document.body.appendChild(toast);
+          setTimeout(() => {
+            toast.style.opacity = '0';
+            toast.style.transition = 'opacity 0.3s';
+            setTimeout(() => document.body.removeChild(toast), 300);
+          }, 2000);
+        } catch (err) {
+          // Fallback mais antigo se clipboard não estiver disponível
+          const textArea = document.createElement('textarea');
+          textArea.value = window.location.href;
+          textArea.style.position = 'fixed';
+          textArea.style.opacity = '0';
+          document.body.appendChild(textArea);
+          textArea.select();
+          try {
+            document.execCommand('copy');
+            const toast = document.createElement('div');
+            toast.textContent = 'Link copiado para a área de transferência!';
+            toast.style.cssText = 'position: fixed; bottom: 100px; right: 24px; background: #25D366; color: white; padding: 12px 20px; border-radius: 8px; z-index: 9999; font-weight: bold; box-shadow: 0 4px 12px rgba(0,0,0,0.3);';
+            document.body.appendChild(toast);
+            setTimeout(() => {
+              toast.style.opacity = '0';
+              toast.style.transition = 'opacity 0.3s';
+              setTimeout(() => document.body.removeChild(toast), 300);
+            }, 2000);
+          } catch (err) {
+            console.error('Erro ao copiar link:', err);
+            alert('Não foi possível compartilhar. Por favor, copie o link manualmente.');
+          }
+          document.body.removeChild(textArea);
+        }
+      }
+    } finally {
+      // Libera o bloqueio após um pequeno delay para evitar cliques muito rápidos
+      setTimeout(() => {
+        setIsSharing(false);
+      }, 500);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-dark pt-24 pb-20">
@@ -113,7 +200,14 @@ export const CarDetails = () => {
                   <p className="text-gray-500 text-sm font-bold uppercase tracking-wider mb-1">{car.make}</p>
                   <h1 className="text-3xl font-bold text-white leading-tight">{car.name}</h1>
                 </div>
-                <button className="text-gray-400 hover:text-white transition-colors p-2 bg-white/5 rounded-full">
+                <button 
+                  onClick={handleShare}
+                  disabled={isSharing}
+                  className={`text-gray-400 hover:text-white transition-colors p-2 bg-white/5 rounded-full hover:bg-white/10 ${
+                    isSharing ? 'opacity-50 cursor-not-allowed' : ''
+                  }`}
+                  aria-label="Compartilhar"
+                >
                   <Share2 size={20} />
                 </button>
               </div>
