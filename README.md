@@ -55,7 +55,7 @@ O botão flutuante muda a mensagem dependendo de onde o usuário está:
 
 1.  Clone o repositório:
     ```bash
-    git clone [https://github.com/FelipeGPellegrini/lions-seminovos-test.git](https://github.com/FelipeGPellegrini/lions-seminovos-test.git)
+    git clone https://github.com/FelipeGPellegrini/lions-seminovos-test.git(https://github.com/FelipeGPellegrini/lions-seminovos-test.git)
     ```
 
 2.  Instale as dependências:
