@@ -1,60 +1,64 @@
-import React, { useRef } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import React from 'react';
+import { motion } from 'framer-motion';
 
 export const VideoHighlight = () => {
   // Configuração da animação de "abertura" (Curtain Reveal)
   const revealVariants = {
     hidden: { 
-      clipPath: 'inset(45% 0 45% 0)', // Começa fechado (só uma linha visível no meio)
-      opacity: 0.8
+      clipPath: 'inset(45% 0 45% 0)', // Começa fechado (fresta fina)
+      opacity: 0
     },
     visible: { 
       clipPath: 'inset(0% 0 0% 0)', // Abre totalmente
       opacity: 1,
       transition: { 
-        duration: 1.5, // Demora 1.5s para abrir (bem suave)
-        ease: [0.22, 1, 0.36, 1] // Easing "cinemático" (começa rápido, termina suave)
+        duration: 1.5, 
+        ease: [0.22, 1, 0.36, 1] 
       }
     }
   };
 
   return (
+    // ADICIONADO: 'overflow-hidden' na section para impedir a barra de rolagem lateral no mobile
     <section className="w-full bg-dark py-10 overflow-hidden">
       
       {/* Container do Vídeo */}
       <motion.div
         initial="hidden"
         whileInView="visible"
-        viewport={{ once: true, margin: "-20%" }} // A animação dispara quando 20% do elemento estiver na tela
+        // CORREÇÃO DO GATILHO:
+        // amount: 0.2 -> Garante que a animação comece assim que 20% do vídeo aparecer.
+        // Isso resolve o problema de passar direto e não abrir.
+        viewport={{ once: true, amount: 0.2 }} 
         variants={revealVariants}
-        className="relative w-full h-[400px] md:h-[600px]" // Altura controlada (Mobile: 400px, PC: 600px)
+        className="relative w-full h-[350px] md:h-[600px]" // Ajustei altura mobile para 350px para caber melhor
       >
-        {/* Camada de Overlay (Opcional - para deixar levemente mais escuro se quiser texto por cima) */}
+        {/* Camada de Overlay */}
         <div className="absolute inset-0 bg-black/10 z-10 pointer-events-none" />
 
         {/* O VÍDEO */}
         <video
-          className="w-full h-full object-cover object-center" // object-cover corta o excesso mantendo o centro
+          className="w-full h-full object-cover object-center"
           autoPlay
           loop
           muted
-          playsInline // Importante para funcionar autoplay no iPhone/Android
+          playsInline // Essencial para iOS/Android
         >
           <source src="/assets/byd-seal.mp4" type="video/mp4" />
           Seu navegador não suporta vídeos.
         </video>
 
-        {/* Texto Flutuante (Opcional - Destaque Tecnológico) */}
-        <div className="absolute bottom-10 left-10 z-20">
+        {/* Texto Flutuante */}
+        <div className="absolute bottom-10 left-6 md:left-10 z-20">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.8, duration: 0.8 }}
           >
-            <h3 className="text-white text-3xl md:text-5xl font-bold tracking-tighter uppercase">
+            <h3 className="text-white text-2xl md:text-5xl font-bold tracking-tighter uppercase drop-shadow-lg">
               BYD Seal
             </h3>
-            <p className="text-primary text-sm md:text-lg font-medium tracking-[0.2em] uppercase mt-2">
+            <p className="text-primary text-xs md:text-lg font-medium tracking-[0.2em] uppercase mt-2 drop-shadow-md">
               Performance Elétrica
             </p>
           </motion.div>
