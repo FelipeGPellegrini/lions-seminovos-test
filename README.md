@@ -35,6 +35,38 @@ _Cálculo real de distância entre o cliente e a loja._
 _Responsividade total e integração inteligente._
 ---
 
+## Decisões Técnicas
+
+### React com Vite
+
+O React foi utilizado pela sua ampla adoção no mercado e facilidade de componentização. O Vite foi escolhido por oferecer inicialização rápida do projeto, hot reload eficiente e excelente desempenho durante o desenvolvimento.
+
+### Tailwind CSS
+
+A estilização foi feita com Tailwind CSS utilizando a abordagem utility first. Essa escolha facilita a manutenção, garante consistência visual e acelera o desenvolvimento de layouts responsivos sem a necessidade de grandes arquivos CSS.
+
+### Organização por Responsabilidade
+
+O projeto foi organizado separando componentes reutilizáveis, páginas, dados estáticos e assets. Essa divisão facilita a leitura do código, manutenção futura e escalabilidade da aplicação.
+
+### Dados Estáticos
+
+Os dados de veículos e lojas foram mantidos em arquivos JSON para simular uma fonte de dados real, permitindo fácil adaptação futura para consumo de APIs.
+
+## Estrutura do Projeto
+
+A estrutura de pastas foi pensada para refletir um projeto real em produção.
+
+
+## Organização do Código
+
+A pasta components concentra todos os componentes reutilizáveis da aplicação, como cabeçalho, rodapé, cards de veículos, filtros e elementos globais como o botão flutuante de WhatsApp.
+
+A pasta pages contém as páginas principais da aplicação, cada uma responsável por um fluxo específico, mantendo a separação clara entre layout e regras de negócio.
+
+A pasta data armazena arquivos JSON responsáveis por simular dados vindos de uma API, facilitando testes, filtros e manipulação das informações.
+
+
 ## ✨ Diferenciais Implementados
 
 ### 📍 Store Locator (Geolocalização Real)
